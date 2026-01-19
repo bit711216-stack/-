@@ -136,7 +136,7 @@ const App: React.FC = () => {
       <header className="p-8 text-center bg-white border-b-8 border-yellow-200 rounded-b-[4rem] shadow-sm">
         <div className="flex items-center justify-center gap-4">
           <span className="text-5xl animate-bounce cursor-pointer" onClick={() => { setActiveTab(AppTab.DISCOVER); setQuizState('idle'); }}>🦖</span>
-          <h1 className="text-5xl font-black text-yellow-500 tracking-tighter cursor-pointer" onClick={() => { setActiveTab(AppTab.DISCOVER); setQuizState('idle'); }}>VoxLingo</h1>
+          <h1 className="text-5xl font-black text-red-500 tracking-tighter cursor-pointer" onClick={() => { setActiveTab(AppTab.DISCOVER); setQuizState('idle'); }}>VoxLingo</h1>
           <span className="text-5xl animate-bounce" style={{animationDelay: '0.2s'}}>⭐</span>
         </div>
       </header>
