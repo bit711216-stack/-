@@ -3,7 +3,7 @@ import { GoogleGenAI, Type, Modality } from "@google/genai";
 import { WordData } from "../types";
 
 // 가이드라인에 따라 process.env.API_KEY를 직접 사용합니다.
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+const ai = new GoogleGenerativeAI({ apiKey: import.meta.env.VITE_API_KEY });
 
 export const lookupWord = async (word: string): Promise<WordData> => {
   const response = await ai.models.generateContent({
