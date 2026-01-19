@@ -1,7 +1,6 @@
-
 import React, { useState, useEffect } from 'react';
 import { AppTab, WordData, SavedWord } from './types';
-import { lookupWord, generateDailyWord } from './services/geminiService';
+import { lookupWord, generateDailyWord, playPronunciation } from './services/geminiService';
 import { WordCard } from './components/WordCard';
 
 interface QuizQuestion {
@@ -85,7 +84,7 @@ const App: React.FC = () => {
     if (savedWords.length < 5) return;
     
     const shuffled = [...savedWords].sort(() => 0.5 - Math.random());
-    const selected = shuffled.slice(0, 5); // 5문제만 출제
+    const selected = shuffled.slice(0, 5); 
     
     const questions: QuizQuestion[] = selected.map(target => {
       const others = savedWords
@@ -112,7 +111,7 @@ const App: React.FC = () => {
   };
 
   const handleQuizAnswer = (option: string) => {
-    if (selectedOption !== null) return; // 이미 답변함
+    if (selectedOption !== null) return; 
     
     setSelectedOption(option);
     const correct = option === quizQuestions[currentQuizIndex].correctAnswer;
@@ -120,7 +119,6 @@ const App: React.FC = () => {
     
     if (correct) {
       setScore(s => s + 1);
-      // 마스터리 업데이트 로직 (간단히)
       const targetWord = quizQuestions[currentQuizIndex].word;
       const updated = savedWords.map(w => {
         if (w.word === targetWord) {
@@ -132,7 +130,6 @@ const App: React.FC = () => {
       localStorage.setItem('voxlingo_words', JSON.stringify(updated));
     }
 
-    // 1.5초 후 다음 문제로
     setTimeout(() => {
       if (currentQuizIndex + 1 < quizQuestions.length) {
         setCurrentQuizIndex(i => i + 1);
@@ -146,20 +143,17 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FFFBEB] pb-32">
-      {/* 상단 로고 */}
       <header className="p-8 text-center bg-white border-b-8 border-yellow-200 rounded-b-[4rem] shadow-sm">
         <div className="flex items-center justify-center gap-4">
-          <span className="text-5xl animate-bounce cursor-pointer" onClick={() => setActiveTab(AppTab.DISCOVER)}>🦖</span>
-          <h1 className="text-5xl font-black text-yellow-500 tracking-tighter cursor-pointer" onClick={() => setActiveTab(AppTab.DISCOVER)}>VoxLingo</h1>
+          <span className="text-5xl animate-bounce cursor-pointer" onClick={() => { setActiveTab(AppTab.DISCOVER); setQuizState('idle'); }}>🦖</span>
+          <h1 className="text-5xl font-black text-yellow-500 tracking-tighter cursor-pointer" onClick={() => { setActiveTab(AppTab.DISCOVER); setQuizState('idle'); }}>VoxLingo</h1>
           <span className="text-5xl animate-bounce" style={{animationDelay: '0.2s'}}>⭐</span>
         </div>
       </header>
 
-      {/* 메인 콘텐츠 */}
       <main className="flex-1 p-6 max-w-2xl mx-auto w-full">
         {activeTab === AppTab.DISCOVER && (
           <div className="space-y-12 animate-in fade-in zoom-in-95 duration-500">
-            {/* 거대 검색창 */}
             <form onSubmit={handleSearch} className="relative mt-8">
               <input 
                 type="text" 
@@ -172,7 +166,7 @@ const App: React.FC = () => {
               <button 
                 type="submit"
                 disabled={isLoading}
-                className="absolute right-4 top-4 bottom-4 px-10 bg-yellow-400 text-white rounded-[2rem] text-2xl font-black bubbly-button hover:bg-yellow-500 disabled:bg-slate-200"
+                className="absolute right-4 top-4 bottom-4 px-10 bg-yellow-400 text-white rounded-[2rem] text-2xl font-black bubbly-button hover:bg-yellow-500 disabled:bg-slate-200 shadow-md"
               >
                 {isLoading ? '...' : '찾기!'}
               </button>
@@ -246,7 +240,7 @@ const App: React.FC = () => {
         )}
 
         {activeTab === AppTab.QUIZ && (
-          <div className="h-[70vh] flex flex-col items-center justify-center space-y-8 animate-in zoom-in-95 duration-500">
+          <div className="h-[70vh] flex flex-col items-center justify-center space-y-8 animate-in zoom-in-95 duration-500 w-full">
             {quizState === 'idle' && (
               <div className="bg-white p-12 rounded-[4rem] border-8 border-indigo-100 shadow-2xl text-center max-w-md w-full">
                 <span className="text-9xl block mb-8 animate-pulse">🎮</span>
@@ -276,7 +270,7 @@ const App: React.FC = () => {
                 </div>
 
                 <div className="bg-white p-12 rounded-[4rem] border-8 border-yellow-200 shadow-2xl text-center">
-                  <h3 className="text-2xl font-black text-yellow-500 mb-4">이 단어의 뜻은?</h3>
+                  <h3 className="text-2xl font-black text-yellow-500 mb-4 uppercase tracking-widest">이 단어의 뜻은?</h3>
                   <div className="text-7xl font-black text-slate-800 mb-12">{quizQuestions[currentQuizIndex].word}</div>
                   
                   <div className="grid gap-4">
@@ -287,7 +281,7 @@ const App: React.FC = () => {
                         disabled={selectedOption !== null}
                         className={`w-full py-6 rounded-3xl text-2xl font-black transition-all border-4 shadow-sm ${
                           selectedOption === null 
-                            ? 'bg-white border-slate-100 hover:border-indigo-400 hover:bg-indigo-50' 
+                            ? 'bg-white border-slate-100 hover:border-indigo-400 hover:bg-indigo-50 active:scale-95' 
                             : option === quizQuestions[currentQuizIndex].correctAnswer
                               ? 'bg-green-100 border-green-500 text-green-700 scale-105'
                               : option === selectedOption
@@ -334,7 +328,6 @@ const App: React.FC = () => {
         )}
       </main>
 
-      {/* 하단 왕버튼 네비게이션 */}
       <nav className="fixed bottom-0 left-0 right-0 p-6 bg-white/80 backdrop-blur-xl border-t-8 border-yellow-100 flex justify-around items-center z-50 rounded-t-[3rem]">
         <NavButton 
           active={activeTab === AppTab.DISCOVER} 
@@ -353,7 +346,7 @@ const App: React.FC = () => {
         />
         <NavButton 
           active={activeTab === AppTab.QUIZ} 
-          onClick={() => setActiveTab(AppTab.QUIZ)}
+          onClick={() => { setActiveTab(AppTab.QUIZ); setQuizState('idle'); }}
           icon="🎮"
           label="퀴즈"
           color="bg-indigo-400"

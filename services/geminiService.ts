@@ -2,12 +2,13 @@
 import { GoogleGenAI, Type, Modality } from "@google/genai";
 import { WordData } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+// 가이드라인에 따라 process.env.API_KEY를 직접 사용합니다.
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 export const lookupWord = async (word: string): Promise<WordData> => {
   const response = await ai.models.generateContent({
     model: 'gemini-3-flash-preview',
-    contents: `Analyze the English word "${word}". Provide its phonetic transcription, Korean meaning, English definition, a natural example sentence with its Korean translation, synonyms, antonyms, and its difficulty level.`,
+    contents: `Analyze the English word "${word}" for elementary/middle school students. Provide its phonetic transcription, Korean meaning, English definition, a simple example sentence with its Korean translation, synonyms, antonyms, and its difficulty level.`,
     config: {
       responseMimeType: "application/json",
       responseSchema: {
@@ -34,7 +35,7 @@ export const lookupWord = async (word: string): Promise<WordData> => {
 export const generateDailyWord = async (): Promise<WordData> => {
   const response = await ai.models.generateContent({
     model: 'gemini-3-flash-preview',
-    contents: "Pick a random, useful English word for advanced learners and provide full details.",
+    contents: "Pick a random, useful, and common English word for kids (level: Beginner or Intermediate) and provide full details in JSON.",
     config: {
       responseMimeType: "application/json",
       responseSchema: {
@@ -49,7 +50,8 @@ export const generateDailyWord = async (): Promise<WordData> => {
           synonyms: { type: Type.ARRAY, items: { type: Type.STRING } },
           antonyms: { type: Type.ARRAY, items: { type: Type.STRING } },
           level: { type: Type.STRING }
-        }
+        },
+        required: ["word", "phonetic", "meaning_kr", "meaning_en", "example_en", "example_kr", "level"]
       }
     }
   });
@@ -90,7 +92,7 @@ export const playPronunciation = async (word: string) => {
   try {
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash-preview-tts",
-      contents: [{ parts: [{ text: `Say clearly: ${word}` }] }],
+      contents: [{ parts: [{ text: `Say clearly and slowly for kids: ${word}` }] }],
       config: {
         responseModalities: [Modality.AUDIO],
         speechConfig: {
