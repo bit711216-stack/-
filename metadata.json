@@ -1,0 +1,7 @@
+{
+  "name": "Copy of VoxLingo - AI English Vocabulary Master",
+  "description": "A sophisticated English learning application powered by Gemini AI, featuring smart word discovery, AI-generated definitions, context-aware examples, and high-quality TTS pronunciation.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
