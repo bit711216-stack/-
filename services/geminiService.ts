@@ -1,9 +1,8 @@
-
-import { GoogleGenerativeAI, Type, Modality } from "@google/generativeai";
+import { GoogleGenAI, Type, Modality } from "@google/genai";
 import { WordData } from "../types";
 
-// 가이드라인에 따라 process.env.API_KEY를 직접 사용합니다.
-const ai = new GoogleGenerativeAI({ apiKey: "AIzaSyCIji11MtIuQ9ioEdmp3dGzQCclzmALBZI" });
+// 가이드라인에 따라 process.env.API_KEY를 사용합니다.
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 export const lookupWord = async (word: string): Promise<WordData> => {
   const response = await ai.models.generateContent({
@@ -29,7 +28,9 @@ export const lookupWord = async (word: string): Promise<WordData> => {
     }
   });
 
-  return JSON.parse(response.text.trim());
+  const text = response.text;
+  if (!text) throw new Error("No response from AI");
+  return JSON.parse(text.trim());
 };
 
 export const generateDailyWord = async (): Promise<WordData> => {
@@ -55,7 +56,10 @@ export const generateDailyWord = async (): Promise<WordData> => {
       }
     }
   });
-  return JSON.parse(response.text.trim());
+  
+  const text = response.text;
+  if (!text) throw new Error("No response from AI");
+  return JSON.parse(text.trim());
 };
 
 // TTS Helper functions
