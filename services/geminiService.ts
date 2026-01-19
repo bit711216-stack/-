@@ -1,5 +1,5 @@
 
-import { GoogleGenerativeAI, Type, Modality } from "@google/generative-ai";
+import { GoogleGenerativeAI, Type, Modality } from "@google/generativeai";
 import { WordData } from "../types";
 
 // 가이드라인에 따라 process.env.API_KEY를 직접 사용합니다.
