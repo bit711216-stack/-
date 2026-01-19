@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { AppTab, WordData, SavedWord } from './types';
-import { lookupWord, generateDailyWord, playPronunciation } from './services/geminiService';
+import { lookupWord, generateDailyWord } from './services/geminiService';
 import { WordCard } from './components/WordCard';
 
 interface QuizQuestion {
@@ -79,7 +79,6 @@ const App: React.FC = () => {
     localStorage.setItem('voxlingo_words', JSON.stringify(updated));
   };
 
-  // 퀴즈 시작 로직
   const startQuiz = () => {
     if (savedWords.length < 5) return;
     
@@ -119,15 +118,6 @@ const App: React.FC = () => {
     
     if (correct) {
       setScore(s => s + 1);
-      const targetWord = quizQuestions[currentQuizIndex].word;
-      const updated = savedWords.map(w => {
-        if (w.word === targetWord) {
-          return { ...w, mastery: Math.min(100, (w.mastery || 0) + 20) };
-        }
-        return w;
-      });
-      setSavedWords(updated);
-      localStorage.setItem('voxlingo_words', JSON.stringify(updated));
     }
 
     setTimeout(() => {
